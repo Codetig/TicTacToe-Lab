@@ -54,14 +54,18 @@ var boxClick =function(event){
 			arrP1.push(gameArr[gameArr.length - 1]);
 			pColor(player1,"white");
 			pColor(player2,"orange");
+			//or: alert("player 2's turn to play");
 			event.target.innerHTML = "X";
+			// or event.target.setAttribute("class", "turnYellow text-center game");
 			event.target.style.backgroundColor = "yellow";
 			
 		} else if(gameArr.length % 2 === 0){
 			arrP2.push(gameArr[gameArr.length - 1]);
 			pColor(player1,"yellow");
+			//or: alert("player 1's turn to play");
 			pColor(player2,"white");
 			event.target.innerHTML = "O";
+			// or event.target.setAttribute("class", "turnOrange text-center game");
 			event.target.style.backgroundColor = "orange";
 		}
 
