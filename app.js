@@ -9,12 +9,32 @@ var arrP2 = [];
 var comp = "0";
 var playComp = false;
 
+function selectBox(index){
+		boxtoclick = boxes[index];
+		boxtoclick.click();
+	}
+
+function readBoard(){
+	var stateArr = [];
+
+	for(var i = 0; i < 9; i++){
+		stateArr.push(boxes[i].innerHTML);
+	}
+
+	return stateArr.join("");
+
+}
+
+
+
 var pColor = function(player, color){ //set color of player to play
 	player.style.backgroundColor = color;
 };
+
 var draw = function(){ //announces the draw game
 	alert("The game was a hard-fought tie! Click reset to play again");
 };
+
 var containedIn = function(subArr, arr){ //checks if winning array is in player array
 	for (var i = 0; i < subArr.length; i++) {
 		if(arr.indexOf(subArr[i]) < 0){
@@ -23,6 +43,7 @@ var containedIn = function(subArr, arr){ //checks if winning array is in player 
 	}
 	return true;
 };
+
 var winner = function(arr){
 	var winCombo = [
 	[boxes[0], boxes[3], boxes[6]],
@@ -60,8 +81,8 @@ var boxClick =function(event){
 			event.target.innerHTML = "X";
 			// or event.target.setAttribute("class", "turnYellow text-center game");
 			event.target.style.backgroundColor = "yellow";
-			if(playComp && comp === "O"){
-				compMove();
+			if(playComp && comp == "O"){
+				selectBox(detBox(readBoard(),"O")[1]);
 			}
 			
 		} else if(gameArr.length % 2 === 0){
@@ -72,8 +93,8 @@ var boxClick =function(event){
 			event.target.innerHTML = "O";
 			// or event.target.setAttribute("class", "turnOrange text-center game");
 			event.target.style.backgroundColor = "orange";
-			if(playComp && comp === "X"){
-				compMove();
+			if(playComp && comp == "X"){
+				selectBox(detBox(readBoard(),"X")[1]);
 			}
 		}
 
@@ -87,8 +108,7 @@ var boxClick =function(event){
 				gameOver();
 			}
 
-		}
-		if(gameArr.length == 9){
+		}else if(gameArr.length == 9){
 			btnReset.setAttribute("class", "text-center player btn btn-primary");
 			draw();
 			gameOver();
@@ -111,117 +131,6 @@ function gameOver(){
 
 
 
-var selectBox = function(element){
-	element.click();
-};
-var compMove = function(){
-	var middle = boxes[4];
-	var corners = [boxes[0], boxes[2], boxes[6], boxes[8]];
-	var sides = [boxes[1], boxes[3], boxes[5], boxes[7]];
-	var stateArr = [];
-	for(var i = 0; i < 9; i++){
-		stateArr.push(boxes[i].innerHTML);
-	}
-	var rpick = function (array, n){ //function to randomly pick from array using last index as n
-		var choices = array;
-		var thebox = Math.round(Math.random()*n);
-		return choices[thebox];
-	};
-	var checkWinBlk =function(xo,goal){
-		var tok;
-		if (goal == "win"){
-			tok = xo;
-		} else if(xo == "X"){
-			tok = "O";
-		} else {
-			tok = "X";
-		}
-		 var result =[];
-		var winCombo = [
-		[boxes[0], boxes[3], boxes[6]],
-		[boxes[1], boxes[4], boxes[7]],
-		[boxes[2], boxes[5], boxes[8]],
-		[boxes[0], boxes[1], boxes[2]],
-		[boxes[3], boxes[4], boxes[5]],
-		[boxes[6], boxes[7], boxes[8]],
-		[boxes[0], boxes[4], boxes[8]],
-		[boxes[2], boxes[4], boxes[6]],
-		];
-		for( var i = 0; i < 8; i++){
-			if(winCombo[i].join("") === (tok +tok+" ")){
-				result.push(winCombo[i][2]);
-			} else if(winCombo[i].join("") === (tok +" "+tok)){
-				result.push(winCombo[i][1]);
-			} else if(winCombo[i].join("") === (" "+tok +tok)){
-				result.push(winCombo[i][0]);
-			} 
-		}
-		return result;
-
-	};
-	
-	var cornersIH =[stateArr[0],stateArr[2],stateArr[6],stateArr[8]];
-	var sidesIH = [stateArr[1],stateArr[3],stateArr[5],stateArr[7]];
-	var middleIH = stateArr[4];
-
-	//computer playing first
-	if(gameArr.length === 0){
-		if(Math.random() > 0.7){
-			selectBox(rpick(sides,3));
-		} else {
-			var thebox = Math.round(Math.random()*3);
-			selectBox(rpick(corners,3));
-		}
-	}
-	if(gameArr.length === 1){
-		if(cornersIH.indexOf("X") < 0){
-			if(middleIH == " ") {
-			selectBox(middle);
-			} else{
-			 selectBox(rpick(corners,3));
-			} 
-		}else {
-			selectBox(middle);
-	}
-	if(gameArr.length === 2){
-		if(middleIH == "O" || sidesIH.indexOf("O") >= 0){
-			if(cornersIH.indexOf("X") >= 0){
-				var ind = cornersIH.indexOf("X");
-				ind === 0? selectBox(corners[3]): ind === 1? selectBox(corners[2]): ind === 2? selectBox(corners[1]): selectBox(corners[0]);
-			} else {
-				if(sidesIH.indexOf("X") === 0){
-					selectBox(boxes[6]);
-					//rpick([corners[6], corners[8]],1)
-				} else if(sidesIH.indexOf("X") == 1){
-					selectBox(boxes[2]);
-					//rpick([corners[1], corners[3]],1)
-				} else if(sidesIH.indexOf("X") == 2){
-					selectBox(boxes[0]);
-					//rpick([corners[0], corners[2]],1)
-				} else {
-					selectBox(boxes[0]);
-				} 
-			}
-		} else{
-			var inde = cornersIH.indexOf(" ");
-			selectBox(corners[inde]);
-		}
-	}
-	if(gameArr.length === 3){
-		var win = checkWinBlk("O",win);
-		var blk = checkWinBlk("X",blk);
-		
-		if(win.length > 0){
-			selectBox(win[0]);
-		} else if(blk > 0){
-			selectBox(blk[0]);
-		} else {
-			alert("Bulls!");
-		}
-	}
-}
-};
-
 var begin = function(){
 	playComp = confirm("Will you like to play against the computer?");
 	if(playComp){
@@ -231,7 +140,7 @@ var begin = function(){
 		alert ("After you...");
 	} else {
 		comp = "X";
-		compMove();
+		selectBox(detBox(readBoard(),"X")[1]);
 	}
 	}
 };
@@ -239,89 +148,64 @@ var begin = function(){
 begin();
 
 
-/*
-comPlay(player1);
 
 
-function detBox(str, p, c){
-	var n = str.search(/xxx......|...xxx...|......xxx|x..x..x..|.x..x..x.|..x..x..x|..x.x.x..|x...x...x/i);
-	var score = 100;
-	var index = 0;
-	if(n===0){
-		score = -100;
-	} else if (str.indexOf(" ") < 0){
-		score = 0;
-	} else {
-		n = str.search(/ooo......|...ooo...|......ooo|o..o..o..|.o..o..o.|..o..o..o|..o.o.o..|o...o...o/i);
-		n === 0? score = 100:undefined;
+
+
+function detBox(str, mytoken){
+	var score;
+	var xwin = str.search(/xxx......|...xxx...|......xxx|x..x..x..|.x..x..x.|..x..x..x|..x.x.x..|x...x...x/i);
+	var owin = str.search(/ooo......|...ooo...|......ooo|o..o..o..|.o..o..o.|..o..o..o|..o.o.o..|o...o...o/i);
+	var opponent;
+
+	if(xwin >= 0)
+	{
+	if(mytoken === "X")
+	{
+		score = 1;
+		return [score, undefined]; 
+	} else if (mytoken === "O")
+	{
+		score = -1;
+		return[score, undefined];
 	}
-	for(var i = 0; i < 9; i++){
-	 if(str.charAt(i) == " "){
-		str = str.split("");
-		str[i] = c;
-		detBox(str.join(""), o, x);
-		index = i;
-		if(score < 0){
-			alert(i);
-			return i;
+	}
+	if(owin >= 0)
+	{
+		if (mytoken ==="O")
+		{
+			score = 1;
+			return [score, undefined];
+		}else if(mytoken === "X")
+		{
+			score = -1;
+			return [score, undefined];
 		}
-	 }
+	}  else if (str.indexOf(" ") < 0)
+	{
+		score = 0;
+		return [score,undefined];
 	}
-	str = str.replace(" ",c);
-	detBox(str, c, p);
-}
-function comPlay(player){
-	var p;
-	var c;
-	if(player == "player1"){
-		p = "X";
-		c = "O";
-	} else {
-		p = "O";
-		c = "X";
-	}
-	var stateArr = [];
-	for(var i = 0; i < 9; i++){
-		stateArr.push(boxes[i].innerHTML);
-	}
-	var state = stateArr.join("");
+	if(mytoken === "X"){ opponent = "O";}
+	else {opponent = "X";}
+	var worst_opp = 1;
+	var pmove;
 	
-	boxClick(boxes(detBox(state,p,c)));
-}
-
-function detBox(str, p, c){
-	var n = str.search(/xxx......|...xxx...|......xxx|x..x..x..|.x..x..x.|..x..x..x|..x.x.x..|x...x...x/i);
-	var score = 100;
-	var index = 0;
-	if(n===0){
-		score = 100;
-		return [score,-1];
-	} else if (str.indexOf(" ") < 0){
-		score = 0;
-		return [score, -1]
-	} else {
-		n = str.search(/ooo......|...ooo...|......ooo|o..o..o..|.o..o..o.|..o..o..o|..o.o.o..|o...o...o/i);
-		if(n === 0){ score = -100; return [score, -1];} //change to if stmt
-		//return score;
-
-	}
-	console.log(str);
-	for(var i = 0; i < 9; i++){
-	 if(str.charAt(i) == " "){
-		str = str.split("");
-		str[i] = "o";
-		str =str.join("");
-		var y = detBox(str, "o", "x");
-		index = i;
-		if(y[0] < score){
-			return [score,i];
+		for(var i = 0; i< str.length; i++)
+		{
+			if(str.charAt(i) === " ")
+			{
+				var newstr = str.substring(0, i) + mytoken + str.substring(i+1,9);
+				var newscore = detBox(newstr, opponent);
+				if (newscore[0] < worst_opp)
+				{
+					worst_opp = newscore[0];
+					pmove = i;
+				}
+			}
 		}
-	 }
-	}
-	str = str.replace(" ",c);
-	detBox(str, c, p);
+	return [-worst_opp, pmove];
 }
 
-detBox("ooxox  xo");
-*/
+
 
