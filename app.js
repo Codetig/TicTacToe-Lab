@@ -12,6 +12,7 @@ var playComp = false;
 function selectBox(index){
 		boxtoclick = boxes[index];
 		boxtoclick.click();
+
 	}
 
 function readBoard(){
@@ -31,9 +32,6 @@ var pColor = function(player, color){ //set color of player to play
 	player.style.backgroundColor = color;
 };
 
-var draw = function(){ //announces the draw game
-	alert("The game was a hard-fought tie! Click reset to play again");
-};
 
 var containedIn = function(subArr, arr){ //checks if winning array is in player array
 	for (var i = 0; i < subArr.length; i++) {
@@ -106,12 +104,11 @@ var boxClick =function(event){
 			} else if(winner(arrP2)){
 				alert("Player 2 wins!");
 				gameOver();
-			}
-
-		}else if(gameArr.length == 9){
+			}else if(gameArr.length == 9){
 			btnReset.setAttribute("class", "text-center player btn btn-primary");
-			draw();
+			alert("The game was a hard-fought tie! Click reset to play again");
 			gameOver();
+			}
 		}
 	}
 };
@@ -122,11 +119,12 @@ for (var i = 0; i < boxes.length; i++) {
 	boxes[i].addEventListener("click", boxClick);
 }
 function gameOver(){
+	pColor(player1,"white");
+	pColor(player2,"white");
+	playComp = false;
 	for (var i = 0; i < boxes.length; i++) {
 		boxes[i].removeEventListener("click", boxClick);
 	}
-	pColor(player1,"white");
-	pColor(player2,"white");
 }
 
 
